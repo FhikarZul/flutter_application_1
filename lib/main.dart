@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/platform_service.dart';
 
 void main() {
@@ -98,7 +99,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await PlatformService.makeCall('+628123456789');
+          const phoneNumber = '+628123456789';
+          final result = await PlatformService.makeCall(phoneNumber);
+          if (!context.mounted) return;
+          if (result == null) {
+            await Clipboard.setData(const ClipboardData(text: phoneNumber));
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Dialer tidak tersedia di simulator. Nomor sudah disalin.',
+                ),
+              ),
+            );
+            return;
+          }
           debugPrint('makeCall result: $result');
         },
         tooltip: 'Increment',

@@ -5,11 +5,16 @@ class PlatformService {
     'com.example.flutter_application_1/call',
   );
 
-  static Future<dynamic> makeCall(String phoneNumber) async {
-    final result = await platform.invokeMethod('makeCall', {
-      'phoneNumber': phoneNumber,
-    });
-
-    return result;
+  static Future<String?> makeCall(String phoneNumber) async {
+    try {
+      final result = await platform.invokeMethod<Object?>('makeCall', {
+        'phoneNumber': phoneNumber,
+      });
+      return result?.toString();
+    } on PlatformException {
+      return null;
+    } on MissingPluginException {
+      return null;
+    }
   }
 }
